@@ -13,5 +13,3 @@ def fib(x):
         return 1
     else:
         return fib(x - 1) + fib(x - 2)
-
-#3
