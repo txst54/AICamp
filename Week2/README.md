@@ -1,7 +1,7 @@
 # Week 2
 
 ## Multivariate Gradient Descent
-Edit the degree variable in the gradientDescent.py file to modify the degree, number of points, and learning rate for the program
+Edit the gradientDescent.py file to modify the degree, number of points, and learning rate for the program
 
 ### Cubic (degree 3)
 ![](cubic.png)
