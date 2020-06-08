@@ -1,45 +1,40 @@
 import matplotlib.pyplot as plt
 import random 
 
-fig = plt.figure()
-ax = plt.axes()
-
 prediction = lambda x, theta: sum([theta[i] * x**i for i in range(len(theta))])
 cost = lambda theta, x, y : sum([((y[i] - prediction(x[i], theta)) ** 2) for i in range(len(x))]) / len(x)
 
-points = 20
-degree = 2
-alpha = 0.005 / (10**(degree * 2))
+degree = 1
+
+X = []
+Y = []
+for line in open("data.train", "r"):
+    values = line.split(",")
+    X.append(float(values[0]))
+    Y.append(float(values[1]))
 
 theta = [random.random() for i in range(degree + 1)]
-X = range(points)
-Y = [random.randrange(100) for x in range(points)]
 prevCost = cost(theta, X, Y)
+alpha = .000000005
 gradient = prevCost
-shouldPlot = 0
+loopCount = 0
 
 while abs(gradient) > 1:
     for i in range(len(X)):
         for j in range(len(theta)):
             theta[j] -= alpha * sum([-2 * X[i]**j * (Y[i] - prediction(X[i], theta)) for i in range(len(X))]) / len(X)
 
-    print(f"Cost: {prevCost} Weights: {theta}")
+    print(f"Cost: {cost(theta, X, Y)} Weights: {theta}")
 
     gradient = (cost(theta, X, Y) - prevCost)
     prevCost = cost(theta, X, Y)
 
-    plt.cla()
-    ax.scatter(X, Y)
-    ax.plot([prediction(x, theta) for x in range(points + 1)])
-    ax.set_xlim([0, points])
-    ax.set_ylim([0, 100])
-    plt.pause(0.005)
-    shouldPlot = 0
-
+fig = plt.figure()
+ax = plt.axes()
 plt.scatter(X, Y)
-plt.plot([prediction(x, theta) for x in range(points + 1)])
-ax.set_xlim([0, points])
-ax.set_ylim([0, 100])
-print(f"Finished gradient descent with degree {degree} and {points} points")
+plt.plot([prediction(x, theta) for x in range(1000)])
+ax.set_xlim([0, 200])
+ax.set_ylim([0, 1000])
 plt.show()
 
+print(f"a is approximately {theta[1]} and b is approximately {theta[0]}")
