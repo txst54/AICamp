@@ -16,7 +16,6 @@ X = range(points)
 Y = [random.randrange(100) for x in range(points)]
 prevCost = cost(theta, X, Y)
 gradient = prevCost
-shouldPlot = 0
 
 while abs(gradient) > 1:
     for i in range(len(X)):
@@ -34,7 +33,6 @@ while abs(gradient) > 1:
     ax.set_xlim([0, points])
     ax.set_ylim([0, 100])
     plt.pause(0.005)
-    shouldPlot = 0
 
 plt.scatter(X, Y)
 plt.plot([prediction(x, theta) for x in range(points + 1)])
