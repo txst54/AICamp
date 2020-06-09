@@ -31,6 +31,8 @@ while abs(gradient) > 1:
     gradient = (cost(theta, X, Y) - prevCost)
     prevCost = cost(theta, X, Y)
 
+print(f"a is approximately {theta[1]} and b is approximately {theta[0]}")
+
 fig = plt.figure()
 ax = plt.axes()
 plt.scatter(X, Y)
@@ -39,4 +41,3 @@ ax.set_xlim([0, 200])
 ax.set_ylim([0, 1000])
 plt.show()
 
-print(f"a is approximately {theta[1]} and b is approximately {theta[0]}")
