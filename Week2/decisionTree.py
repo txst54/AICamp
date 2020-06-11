@@ -21,6 +21,9 @@ def genTree(x, y):
         bestAttr = np.where(infGain == np.max(infGain))[0]
         return {key:genTree(np.delete(x, bestAttr, 0)[:, x[bestAttr][0] == key], y[x[bestAttr][0] == key]) for key in np.unique(x[bestAttr]) if key != '?'}
     else:
-        return np.unique(y)
+        if np.unique(y).shape[0] == 1:
+            return y[:][0]
+        else:
+            return "Unsure"
 
 pprint.pprint(genTree(X, Y))
