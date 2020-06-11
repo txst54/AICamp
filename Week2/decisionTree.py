@@ -4,7 +4,7 @@ import numpy as np
 import math
 import pprint
 
-data = np.loadtxt("agaricus-lepiota.data", delimiter=",", dtype=str)
+data = np.loadtxt("expanded.Z", delimiter=",", dtype=str)
 data = data.T
 
 Y, X = np.split(data, [1])
@@ -19,11 +19,11 @@ def genTree(x, y):
     if np.unique(y).shape[0] > 1:
         infGain = [informationGain(y, attr) for attr in x]
         bestAttr = np.where(infGain == np.max(infGain))[0]
-        return {key:genTree(np.delete(x, bestAttr, 0)[:, x[bestAttr][0] == key], y[x[bestAttr][0] == key]) for key in np.unique(x[bestAttr]) if key != '?'}
+        return {key:genTree(np.delete(x, bestAttr, 0)[:, x[bestAttr][0] == key], y[x[bestAttr][0] == key]) for key in np.unique(x[bestAttr])}
     else:
         if np.unique(y).shape[0] == 1:
             return y[:][0]
         else:
-            return "Unsure"
+            return ""
 
 pprint.pprint(genTree(X, Y))
