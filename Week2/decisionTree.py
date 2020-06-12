@@ -18,8 +18,8 @@ informationGain = lambda y, x : entropy(y) - entropyConditional(y, x)
 def genTree(x, y):
     if np.unique(y).shape[0] > 1:
         infGain = [informationGain(y, attr) for attr in x]
-        bestAttr = np.where(infGain == np.max(infGain))[0]
-        return {key:genTree(np.delete(x, bestAttr, 0)[:, x[bestAttr][0] == key], y[x[bestAttr][0] == key]) for key in np.unique(x[bestAttr])}
+        bestAttr = infGain.index(max(infGain))
+        return {key:genTree(np.delete(x, bestAttr, 0)[:, x[bestAttr] == key], y[x[bestAttr] == key]) for key in np.unique(x[bestAttr])}
     else:
         if np.unique(y).shape[0] == 1:
             return y[:][0]
