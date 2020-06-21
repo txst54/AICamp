@@ -2,26 +2,27 @@
 import numpy as np
 import copy
 import os
+import pprint
 
 puzzle = np.array([
-    [17, 11, 18, 19, 23],
-    [15,  9,  6, 12, 24],
-    [8,   1,  7, 14,  3],
-    [16, 22, 20, 13,  5],
-    [21,  4,  2, 10,  0]
+    [1, 5, 2, 3],
+    [4, 11, 8, 10],
+    [7, 6, 15, 14],
+    [9, 0, 13, 12],
     ])
 
 ideal = np.reshape(np.arange(1, np.prod(puzzle.shape) + 1), puzzle.shape)
 ideal[ideal.shape[0] - 1, ideal.shape[1] - 1] = 0
 
 class Node:
-    def __init__(self, h, g, state, parent=None):
+    def __init__(self, h, g, state, parent=None, move=None):
         self.h = h
         self.g = g
         self.f = g + h
         self.state = state
         self.neighbours = self.findNeighbours()
         self.parent = parent
+        self.move = move
 
     def findNeighbours(self):
         currentPos = np.where(self.state == 0)
@@ -43,9 +44,9 @@ def misplaced(initial, solution):
     return np.sum((initial == solution))
 
 def astar(heuristic, initial, solution):
-    startNode = Node(heuristic(initial, solution), 0, initial)
+    startNode = Node(heuristic(copy.deepcopy(initial), copy.deepcopy(solution)), 0, copy.deepcopy(initial))
     frontier = np.array([startNode])
-    visited = np.array([])
+    visited = np.array([Node(0, 0, solution)])
 
     while frontier.size > 0:
         current = np.amin(frontier)
@@ -58,28 +59,33 @@ def astar(heuristic, initial, solution):
         print("Current Position:")
         print(current.state)
         print()
-        print("Possible moves")
+        print("Possible Moves:")
         for neighbour in current.neighbours:
             state = copy.deepcopy(current.state)
             coords = [np.where(state == neighbour), np.where(state == 0)]
             state[coords[0]], state[coords[1]] = state[coords[1]], state[coords[0]]
 
-            if np.array_equal(current.state, solution):
+            if heuristic(state, solution) == 0:
+                print("found solution")
                 path = []
-                while current != None:
-                    path.append(current)
+                while current.parent != None:
+                    currentPos = np.where(current.state == 0)
+                    prevPos = np.where(current.parent.state == 0)
+                    path.append(np.subtract(currentPos, prevPos))
                     current = current.parent
-                return path.reverse()
+                return path[::-1]
             
-            if True in [(state == el.state).all() for el in visited]:
+            if True in [(state == el.state).all() and current.g < el.g for el in visited]:
                 print("Already inside visited")
+            elif True in [(state == el.state).all() and current.g < el.g for el in frontier]:
+                print("Already inside frontier")
             else:
-                child = Node(heuristic(state, solution), current.g + 1, state, current)
-                frontier = np.append(frontier, copy.deepcopy(child))
+                child = Node(heuristic(state, solution), current.g + 1, state, current, np.where(neighbour == current.neighbours))
+                frontier = np.insert(frontier, 0, copy.deepcopy(child), 0)
                 print(state)
             print()
 
-        visited = np.append(visited, copy.deepcopy(current))
+        visited = np.insert(visited, 0, copy.deepcopy(current), 0)
         os.system("clear")
 
-print(astar(manhattan, puzzle, ideal))
+pprint.pprint(astar(manhattan, puzzle, ideal))
