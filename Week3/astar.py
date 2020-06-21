@@ -71,7 +71,7 @@ def astar(heuristic, initial, solution):
                     current = current.parent
                 return path.reverse()
             
-            if True in [(state == el.state).all() and heuristic(state, solution) < el.h  for el in visited]:
+            if True in [(state == el.state).all() for el in visited]:
                 print("Already inside visited")
             else:
                 child = Node(heuristic(state, solution), current.g + 1, state, current)
