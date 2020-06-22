@@ -66,16 +66,31 @@ def astar(heuristic, initial, solution):
             state[coords[0]], state[coords[1]] = state[coords[1]], state[coords[0]]
 
             if state.tobytes() == solution.tobytes():
-                os.system("clear")
                 print("Found solution")
                 current = Node(heuristic(state, solution), current.g + 1, state, current, np.where(neighbour == current.neighbours))
                 path = []
+                nodes = []
                 while current.parent != None:
                     currentPos = np.where(current.state == 0)
                     prevPos = np.where(current.parent.state == 0)
-                    path.append(np.subtract(currentPos, prevPos))
+                    move = tuple(np.subtract(currentPos, prevPos))
+                    if move[0] == -1:
+                        path.append("up")
+                    elif move[0] == 1:
+                        path.append("down")
+                    elif move[1] == -1:
+                        path.append("left")
+                    elif move[1] == 1:
+                        path.append("right")
+                    nodes.append(current)
                     current = current.parent
-                return [(move[0][0], move[1][0]) for move in path[::-1]]
+                os.system("clear")
+                for node in nodes[::-1]:
+                    print("Optimal path looks like:")
+                    print(node.state)
+                    time.sleep(1)
+                    os.system("clear")
+                return path[::-1]
             
             if True in [state.tobytes() == el.state.tobytes() and current.g < el.g for el in visited]:
                 print("Already inside visited")
