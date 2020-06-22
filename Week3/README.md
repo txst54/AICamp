@@ -1,4 +1,4 @@
 # Week 3
 
 ## A*
-![](https://asciinema.org/a/85TFYku3n0UNVe8SdeYHFH1kJ)
+![![asciicast](https://asciinema.org/a/85TFYku3n0UNVe8SdeYHFH1kJ.png)](https://asciinema.org/a/85TFYku3n0UNVe8SdeYHFH1kJ)
