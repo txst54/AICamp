@@ -2,13 +2,13 @@
 import numpy as np
 import copy
 import os
-import pprint
+import time
 
 puzzle = np.array([
-    [1, 5, 2, 3],
-    [4, 11, 8, 10],
-    [7, 6, 15, 14],
-    [9, 0, 13, 12],
+    [1, 3, 14, 4],
+    [15, 2, 8, 11],
+    [6, 7, 5, 12],
+    [9, 13, 10, 0],
     ])
 
 ideal = np.reshape(np.arange(1, np.prod(puzzle.shape) + 1), puzzle.shape)
@@ -41,7 +41,7 @@ def manhattan(initial, solution):
     return np.sum(np.abs(np.subtract(actual, optimal)))
 
 def misplaced(initial, solution):
-    return np.sum((initial == solution))
+    return np.sum((initial != solution))
 
 def astar(heuristic, initial, solution):
     startNode = Node(heuristic(copy.deepcopy(initial), copy.deepcopy(solution)), 0, copy.deepcopy(initial))
@@ -65,19 +65,21 @@ def astar(heuristic, initial, solution):
             coords = [np.where(state == neighbour), np.where(state == 0)]
             state[coords[0]], state[coords[1]] = state[coords[1]], state[coords[0]]
 
-            if heuristic(state, solution) == 0:
-                print("found solution")
+            if state.tobytes() == solution.tobytes():
+                os.system("clear")
+                print("Found solution")
+                current = Node(heuristic(state, solution), current.g + 1, state, current, np.where(neighbour == current.neighbours))
                 path = []
                 while current.parent != None:
                     currentPos = np.where(current.state == 0)
                     prevPos = np.where(current.parent.state == 0)
                     path.append(np.subtract(currentPos, prevPos))
                     current = current.parent
-                return path[::-1]
+                return [(move[0][0], move[1][0]) for move in path[::-1]]
             
-            if True in [(state == el.state).all() and current.g < el.g for el in visited]:
+            if True in [state.tobytes() == el.state.tobytes() and current.g < el.g for el in visited]:
                 print("Already inside visited")
-            elif True in [(state == el.state).all() and current.g < el.g for el in frontier]:
+            elif True in [state.tobytes() == el.state.tobytes() and current.g < el.g for el in frontier]:
                 print("Already inside frontier")
             else:
                 child = Node(heuristic(state, solution), current.g + 1, state, current, np.where(neighbour == current.neighbours))
@@ -88,4 +90,4 @@ def astar(heuristic, initial, solution):
         visited = np.insert(visited, 0, copy.deepcopy(current), 0)
         os.system("clear")
 
-pprint.pprint(astar(manhattan, puzzle, ideal))
+print(astar(manhattan, puzzle, ideal))
